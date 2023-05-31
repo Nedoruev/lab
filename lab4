@@ -1,0 +1,52 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        if (args.Length > 0)
+        {
+            if (args[0] == "-h" || args[0] == "--help")
+            {
+                ShowHelp();
+                Environment.Exit(0);
+            }
+            else
+            {
+                foreach (string directory in args)
+                {
+                    Console.WriteLine($"Зміна атрибутів у каталозі {directory}");
+                    ChangeAttributes(directory);
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("Параметри не вказано. Введіть шляхи до каталогів як параметри або використайте -h для отримання довідки.");
+            Environment.Exit(1);
+        }
+
+        Console.ReadLine();
+    }
+
+    static void ChangeAttributes(string directory)
+    {
+        System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(directory);
+        System.IO.FileInfo[] files = dirInfo.GetFiles("*.*", System.IO.SearchOption.AllDirectories);
+
+        foreach (System.IO.FileInfo file in files)
+        {
+            System.IO.FileAttributes attributes = file.Attributes;
+            attributes &= ~System.IO.FileAttributes.ReadOnly;
+            attributes &= ~System.IO.FileAttributes.Hidden;
+            file.Attributes = attributes;
+        }
+    }
+
+    static void ShowHelp()
+    {
+        Console.WriteLine("Довідка:");
+        Console.WriteLine("  -h, --help   Виводить цю довідку.");
+        Console.WriteLine("  Параметри:   Шляхи до каталогів, для яких треба змінити атрибути файлів.");
+    }
+}
